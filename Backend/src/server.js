@@ -1,12 +1,10 @@
 import express from "express";
 import notesRoutes from "./routes/notesRoutes.js";
-import cors from "cors"
+import cors from "cors";
 
 import { connectDB } from "../src/config/db.js";
 import dotenv from "dotenv";
-// import rateLimiter from "./middleware/rateLimiter.js";
-
-// const express = require("express");
+import rateLimiter from "./middleware/rateLimiter.js";
 
 dotenv.config();
 const app = express();
@@ -19,8 +17,7 @@ app.use(
   })
 );
 app.use(express.json()); // this middleware will parse JSON bodies: req.body
-// app.use(rateLimiter);
-
+app.use(rateLimiter);
 
 app.use("/api/notes", notesRoutes);
 
