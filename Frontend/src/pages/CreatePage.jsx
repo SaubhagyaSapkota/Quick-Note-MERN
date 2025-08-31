@@ -13,24 +13,33 @@ const CreatePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!title || !content) {
       toast.error("Please fill all the fields");
       return;
     }
+
     try {
       setLoading(true);
       await api.post("/notes", { title, content });
       toast.success("Note created successfully");
       setTitle("");
       setContent("");
-      Navigate("/")
+      Navigate("/");
     } catch (error) {
       console.log("Error creating note:", error);
-      toast.error("Failed to create note");
+      if (error.response.status === 429) {
+        toast.error("Too many requests. Please try again later.", {
+          duration: 4000,
+        });
+      } else {
+        toast.error("Failed to create note");
+      }
     } finally {
       setLoading(false);
     }
   };
+  
   return (
     <div className="min-h-screen bg-base-200">
       <div className="container mx-auto px-4 py-8">
@@ -69,7 +78,11 @@ const CreatePage = () => {
                   />
                 </div>
                 <div className="card-actions justify-end">
-                  <button type="submit" className="btn btn-primary" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={loading}
+                  >
                     {loading ? "Creating..." : "Create Note"}
                   </button>
                 </div>
